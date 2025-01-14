@@ -5,6 +5,7 @@
 package com.example.bai1.Repository;
 
 import com.example.bai1.Model.User;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,9 +16,16 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+
     Optional<User> findByEmail(String email);
+
     Optional<User> findByUsernameOrEmail(String username, String email);
+
     Optional<User> findByUsername(String username);
+
+    List<User> findAll();
+
     Boolean existsByUsername(String username);
+
     Boolean existsByEmail(String email);
 }

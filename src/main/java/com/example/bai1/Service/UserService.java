@@ -4,9 +4,13 @@
  */
 package com.example.bai1.Service;
 
+import com.example.bai1.DTO.Request.LoginRequest;
+import com.example.bai1.DTO.Request.RegisterUser;
+import com.example.bai1.Model.Role;
 import com.example.bai1.Model.User;
 import com.example.bai1.Repository.RoleRepository;
 import com.example.bai1.Repository.UserRepository;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +34,6 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
@@ -41,6 +44,16 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),
                 authorities);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll(); // Trả về danh sách tất cả người dùng
+    }
+
+
+    public User findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return user;
     }
 
 }

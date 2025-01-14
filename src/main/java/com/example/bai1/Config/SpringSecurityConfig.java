@@ -4,10 +4,14 @@
  */
 package com.example.bai1.Config;
 
+import com.example.bai1.Service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -21,7 +25,10 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@RequiredArgsConstructor
 public class SpringSecurityConfig {
+
+    private final UserService userService;
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -29,35 +36,27 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(csrf -> csrf.disable());
+        httpSecurity
+                .authorizeHttpRequests(request -> request
+                .anyRequest().permitAll()
+                );
 
-        http.csrf().disable()
-                .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(HttpMethod.POST,"/**").permitAll();
-                }).httpBasic(Customizer.withDefaults());
-        return http.build();
+        return httpSecurity.build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-
-        UserDetails ramesh = User.builder()
-                .username("ramesh")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("admin"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(ramesh, admin);
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);  // Sử dụng UserService thay vì UserDetailsService mặc định
+        provider.setPasswordEncoder(passwordEncoder());  // Sử dụng PasswordEncoder để mã hóa mật khẩu
+        return provider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
+
 }

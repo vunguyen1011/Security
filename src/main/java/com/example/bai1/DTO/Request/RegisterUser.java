@@ -1,0 +1,22 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.example.bai1.DTO.Request;
+
+import lombok.Builder;
+import lombok.Data;
+
+/**
+ *
+ * @author Admin
+ */
+@Data
+@Builder
+public class RegisterUser {
+
+    private String name;
+    private String username;
+    private String email;
+    private String password;
+}
