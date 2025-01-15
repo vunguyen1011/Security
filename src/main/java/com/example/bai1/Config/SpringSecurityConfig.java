@@ -16,6 +16,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,12 +24,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity
+@EnableWebSecurity
 public class SpringSecurityConfig {
 
     private final UserService userService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final static String[] WHITE_URL = {"nguyenvu/auth/register"};
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -37,11 +43,18 @@ public class SpringSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        // Tắt CSRF nếu bạn đang làm việc với API và JWT
         httpSecurity.csrf(csrf -> csrf.disable());
+
+        // Cấu hình quyền truy cập cho các endpoint công khai
         httpSecurity
                 .authorizeHttpRequests(request -> request
-                .anyRequest().permitAll()
-                );
+                // Các URL trong WHITE_URL không cần xác thực
+                .requestMatchers(WHITE_URL).permitAll()
+                // Các yêu cầu còn lại cần phải xác thực
+                .anyRequest().authenticated());
+
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

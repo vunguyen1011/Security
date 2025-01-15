@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final JwtService jwtService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/token/{username}")
     Apiresponse<String> generateToken(@PathVariable String username) {
@@ -35,7 +36,7 @@ public class AuthController {
                 .build();
 
     }
-        private final AuthenticationService authenticationService;
+
     @PostMapping("/register")
     public Apiresponse<User> signup(@RequestBody RegisterUser registerUser) {
         User user = authenticationService.register(registerUser);
