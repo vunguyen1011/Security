@@ -4,8 +4,7 @@
  */
 package com.example.bai1.Repository;
 
-import com.example.bai1.Model.Role;
-import java.util.Optional;
+import com.example.bai1.Model.LogoutToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @author Admin
  */
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Integer>{
-     Optional<Role> findByName(String name);
+public interface LogoutRepository extends JpaRepository<LogoutToken, String>{
+    
 }

@@ -32,14 +32,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-    private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final static String[] WHITE_URL = {"nguyenvu/auth/register"};
-
-    @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final static String[] WHITE_URL = {"/auth/signup", "/auth/signin","/auth/logout","users/getInfor"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -57,19 +51,6 @@ public class SpringSecurityConfig {
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService);  // Sử dụng UserService thay vì UserDetailsService mặc định
-        provider.setPasswordEncoder(passwordEncoder());  // Sử dụng PasswordEncoder để mã hóa mật khẩu
-        return provider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
     }
 
 }

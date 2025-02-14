@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: bai1
+  security:
+    user:
+      name: nguyenvu
+      password: 10112004
+    jwt: 
+      secret-key: Ewu4H0jzCNxXtoJS1D9YzLZ/zENfOLLdYQIudk+P5BLa66bFbXt2D/to55MViGnF
+      expiration: 86400000 
+      refresh-token:
+        expiration: 604800000
+  datasource:
+    url: jdbc:mysql://localhost:3306/demo
+    name: root
+    password: ""
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8080
+  servlet:
+    context-path: /nguyenvu
+logging:
+  level:
+    org.springframework.security: DEBUG

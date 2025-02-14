@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,8 +51,18 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll(); // Trả về danh sách tất cả người dùng
     }
 
-
     public User findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return user;
+    }
+
+    public User getInfor() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username == null) {
+            System.out.println("null user");
+        }
+        System.out.println(username);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         return user;
     }

@@ -12,13 +12,16 @@ import com.example.bai1.Service.AuthenticationService;
 import com.example.bai1.Service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -32,19 +35,30 @@ public class UserController {
 
     private final UserService userService;
 
-     @PostMapping("/findUser")
-    public Apiresponse<User> findUSer (@RequestBody String username) {
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/findUser")
+    public Apiresponse<User> findUSerForAdmin(@RequestParam String username) {
         User user = userService.findUserByUsername(username);
         return Apiresponse.<User>builder()
                 .result(user)
                 .build();
     }
+
+    @GetMapping("/getInfor") // sai Api này mai fix
+    public Apiresponse<User> findUser() {
+        var user = userService.getInfor();
+        return Apiresponse.<User>builder()
+                .result(user)
+                .build();
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping()
-    public Apiresponse<List<User>> getAll(){
-        List<User> users =userService.getAllUsers();
+    public Apiresponse<List<User>> getAll() {
+        List<User> users = userService.getAllUsers();
         return Apiresponse.<List<User>>builder()
                 .result(users)
                 .build();
-                
+
     }
 }
